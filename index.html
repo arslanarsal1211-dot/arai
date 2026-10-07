@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ArslanAI Video Maker — Free AI Video Generator</title>
+<style>
+  :root {
+    --bg: #070b14;
+    --card: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.12);
+    --text: #eef2ff;
+    --muted: #9aa7c7;
+    --primary: #7c3aed;
+    --primary2: #06b6d4;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(124,58,237,0.25), transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(6,182,212,0.20), transparent 40%),
+      var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  .container { width: min(1180px, 92%); margin: auto; }
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px);
+    background: rgba(7,11,20,0.72);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0; gap: 20px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 1.15rem; letter-spacing: -0.4px;
+  }
+  .logo-mark {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary2));
+    display: grid; place-items: center; font-weight: 900;
+    box-shadow: 0 0 30px rgba(124,58,237,0.45);
+  }
+  .nav-links { display: flex; gap: 22px; color: var(--muted); font-size: 0.95rem; }
+  .nav-links a:hover { color: white; }
+  .btn {
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    padding: 11px 18px; border-radius: 999px; cursor: pointer;
+    font-weight: 700; transition: 0.2s; font-size: 0.92rem;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.3); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary2));
+    border: none; color: white;
+    box-shadow: 0 10px 30px rgba(124,58,237,0.35);
+  }
+  .btn-primary:hover { box-shadow: 0 14px 40px rgba(124,58,237,0.5); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .hero { padding: 80px 0 50px; text-align: center; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border); background: var(--card);
+    color: var(--muted); padding: 8px 14px; border-radius: 999px;
+    font-size: 0.85rem; margin-bottom: 22px;
+  }
+  .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 12px #22c55e; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: -2px; margin-bottom: 18px; }
+  .gradient-text {
+    background: linear-gradient(135deg, #a78bfa, #22d3ee, #f59e0b);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--muted); max-width: 720px; margin: auto; font-size: 1.08rem; }
+  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+
+  section { padding: 60px 0; }
+  .section-head { text-align: center; margin-bottom: 40px; }
+  .section-head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -1px; margin-bottom: 10px; }
+  .section-head p { color: var(--muted); max-width: 650px; margin: auto; }
+
+  .studio-box {
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+    border: 1px solid var(--border); border-radius: 28px; padding: 28px;
+    backdrop-filter: blur(20px);
+  }
+  .studio-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
+  .form-group { margin-bottom: 16px; }
+  label { display: block; margin-bottom: 7px; font-size: 0.88rem; color: var(--muted); font-weight: 600; }
+  input, textarea, select {
+    width: 100%; background: rgba(0,0,0,0.28); border: 1px solid var(--border);
+    color: var(--text); border-radius: 14px; padding: 13px 14px;
+    font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: #7c3aed; box-shadow: 0 0 0 4px rgba(124,58,237,0.15);
+  }
+  textarea { min-height: 100px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .output {
+    background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+    border-radius: 20px; padding: 22px; min-height: 420px;
+    max-height: 620px; overflow-y: auto;
+  }
+  .output h3 { margin-bottom: 6px; }
+  .logline { color: var(--muted); font-size: 0.92rem; margin-bottom: 18px; }
+
+  .video-preview {
+    width: 100%; border-radius: 14px; margin-top: 16px;
+    border: 1px solid var(--border); background: #000;
+  }
+  .download-btn { margin-top: 12px; width: 100%; display: block; text-align: center; }
+  .status-text { font-size: 0.9rem; color: var(--muted); margin-top: 8px; }
+
+  .progress {
+    margin-top: 18px; background: rgba(0,0,0,0.3); border-radius: 999px;
+    height: 10px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #7c3aed, #06b6d4);
+    transition: width 0.3s;
+  }
+  .hidden { display: none; }
+
+  .model-info {
+    background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 12px; padding: 12px 14px; font-size: 0.85rem;
+    color: #c4b5fd; margin-top: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .studio-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; }
+    .hero { padding-top: 50px; }
+    .studio-box { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <span>ArslanAI <span style="color:#a78bfa">Video Maker</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#studio">AI Studio</a>
+      <a href="#models">Models</a>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">
+      Create Free Video
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="badge"><span class="dot"></span> 100% Free • No Sign-Up • No Watermark</div>
+    <h1>
+      Turn any idea into a <span class="gradient-text">real AI video</span>
+    </h1>
+    <p>
+      ArslanAI Video Maker generates actual downloadable MP4 videos using free AI models.
+      No account. No API key. No credit card. Just type and generate.
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">
+        Start Creating Free
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- AI STUDIO -->
+<section id="studio">
+  <div class="container">
+    <div class="section-head">
+      <h2>AI Video Studio</h2>
+      <p>Describe your video, choose a model, and generate a real downloadable AI video — free.</p>
+    </div>
+
+    <div class="studio-box">
+      <div class="studio-grid">
+        <!-- FORM -->
+        <form id="videoForm">
+          <div class="form-group">
+            <label for="prompt">Your Video Idea</label>
+            <textarea id="prompt" placeholder="Example: A poor Hunza boy walking through a mountain valley at sunrise, cinematic, emotional..." required></textarea>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="model">AI Video Model</label>
+              <select id="model">
+                <option value="wan-ai/wan2.7-t2v">Wan 2.7 (Fast, Free)</option>
+                <option value="bytedance/seedance-1.0-lite">Seedance 1.0 Lite (Fast)</option>
+                <option value="bytedance/seedance-1.0-pro">Seedance 1.0 Pro (High Quality)</option>
+                <option value="pixverse/pixverse-v6">PixVerse V6 (Cinematic)</option>
+                <option value="minimax/minimax-h3">MiniMax H3 (1080p + Audio)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="aspect">Aspect Ratio</label>
+              <select id="aspect">
+                <option value="16:9">16:9 Landscape (YouTube)</option>
+                <option value="9:16">9:16 Portrait (Shorts/Reels)</option>
+                <option value="1:1">1:1 Square</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="model-info" id="modelInfo">
+            ⚡ Wan 2.7 is the fastest free model. Great for quick previews.
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; margin-top:16px;" id="generateBtn">
+            ✨ Generate Free AI Video
+          </button>
+          <p class="status-text" id="statusText">Ready. No sign-in required.</p>
+        </form>
+
+        <!-- OUTPUT -->
+        <div>
+          <div id="progressWrap" class="progress hidden">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+
+          <div id="output" class="output">
+            <h3>Your AI video will appear here</h3>
+            <p class="logline">Enter a prompt and click Generate. Your video will be ready in 30 seconds to 5 minutes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELS -->
+<section id="models">
+  <div class="container">
+    <div class="section-head">
+      <h2>Free AI Video Models</h2>
+      <p>Powered by Puter.js — free, unlimited access with no API keys.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;">
+        <h3>Wan 2.7</h3>
+        <p style="color:var(--muted); font-size:0.9rem;">Fast text-to-video. Best for quick previews and social clips.</p>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;">
+        <h3>Seedance 1.0</h3>
+        <p style="color:var(--muted); font-size:0.9rem;">Cinematic quality from ByteD signance. Great for storytelling.</p>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;">
+        <h3>PixVerse V6</h3>
+        <p style="color:var(--muted); font-size:0.9rem;">High-fidelity cinematic output with smooth motion.</p>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;">
+        <h3>MiniMax H3</h3>
+        <p style="color:var(--muted); font-size:0.9rem;">Up to 1080p with synchronized audio support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="border-top: 1px solid var(--border); padding: 34px 0; color: var(--muted); text-align: center; font-size: 0.9rem;">
+  <div class="container">
+    <p>© 2025 ArslanAI Video Maker. Powered by Puter.js — free, no-up required.</p>
+  </div>
+</footer>
+
+<!-- Puter.js — free AI, no API keys, no sign-up -->
+<script src="https://js.puter.com/v2/"></script>
+
+<script>
+  // ============================================================
+  //  NO API KEY NEEDED. Puter.js handles everything.
+  //  Free AI video generation with Wan, Seedance, PixVerse, MiniMax.
+  // ============================================================
+
+  const form = document.getElementById('videoForm');
+  const output = document.getElementById('output');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+  const generateBtn = document.getElementById('generateBtn');
+  const statusText = document.getElementById('statusText');
+  const modelInfo = document.getElementById('modelInfo');
+
+  let isGenerating = false;
+
+  // Update model info when selection changes
+  document.getElementById('model').addEventListener('change', function () {
+    const info = {
+      'wan-ai/wan2.7-t2v': '⚡ Wan 2.7 is the fastest free model. Great for quick previews.',
+      'bytedance/seedance-1.0-lite': '🎬 Seedance Lite is fast and produces clean motion.',
+      'bytedance/seedance-1.0-pro': '🎥 Seedance Pro delivers cinematic quality with rich detail.',
+      'pixverse/pixverse-v6': '✨ PixVerse V6 produces high-fidelity cinematic videos.',
+      'minimax/minimax-h3': '🔊 MiniMax H3 supports up to 1080p with synchronized audio.'
+    };
+    modelInfo.textContent = info[this.value] || 'Free AI video model.';
+  });
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    if (isGenerating) return;
+
+    const prompt = document.getElementById('prompt').value.trim();
+    const model = document.getElementById('model').value;
+    const aspect = document.getElementById('aspect').value;
+
+    if (!prompt) {
+      alert('Please describe your video idea.');
+      return;
+    }
+
+    isGenerating = true;
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating...';
+    progressWrap.classList.remove('hidden');
+    progressBar.style.width = '5%';
+    statusText.textContent = 'Starting free AI video generation...';
+
+    output.innerHTML = `
+      <h3>Generating your AI video...</h3>
+      <p class="logline">Model: ${model} | ${aspect}</p>
+      <p class="status-text" id="liveStatus">Connecting to AI model...</p>
+      <div class="progress" style="margin-top:14px;">
+        <div class="progress-bar" id="innerProgress" style="width:8%;"></div>
+      </div>
+    `;
+
+    // Simulate progress while generation runs
+    let fakeProgress = 8;
+    const progressInterval = setInterval(() => {
+      fakeProgress = Math.min(fakeProgress + Math.random() * 6, 92);
+      progressBar.style.width = fakeProgress + '%';
+      const inner = document.getElementById('innerProgress');
+      if (inner) inner.style.width = fakeProgress + '%';
+    }, 1200);
+
+    try {
+      // ============================================================
+      //  CALL PUTER.JS — FREE AI VIDEO GENERATION
+      //  No API key. No sign-in. Uses User-Pays model.
+      // ============================================================
+
+      const videoElement = await puter.ai.txt2vid(prompt, {
+        model: model,
+        aspect_ratio: aspect
+      });
+
+      clearInterval(progressInterval);
+      progressBar.style.width = '100%';
+
+      // Get the video source URL
+      const videoSrc = videoElement.src || videoElement.querySelector('source')?.src;
+
+      if (!videoSrc) {
+        throw new Error('Video was generated but no source URL was returned.');
+      }
+
+      // ============================================================
+      //  DISPLAY VIDEO + DOWNLOAD BUTTON
+      // ============================================================
+
+      output.innerHTML = `
+        <h3>🎉 Your AI video is ready!</h3>
+        <p class="logline">Prompt: ${prompt.slice(0, 120)}...</p>
+        <video class="video-preview" controls autoplay muted loop>
+          <source src="${videoSrc}" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <a class="btn btn-primary download-btn" href="${videoSrc}" download="arslanai-video.mp4" target="_blank">
+          ⬇ Download Video (MP4)
+        </a>
+        <p class="status-text">If the download doesn't start, right-click the video and select "Save video as".</p>
+        <button class="btn" style="width:100%; margin-top:8px;" onclick="location.reload()">
+          🔄 Create Another Video
+        </button>
+      `;
+
+      statusText.textContent = 'Video generated successfully. Free. No watermark.';
+      statusText.style.color = '#22c55e';
+
+      // Hide the top progress bar after a moment
+      setTimeout(() => progressWrap.classList.add('hidden'), 800);
+
+    } catch (err) {
+      clearInterval(progressInterval);
+      console.error('Puter.js error:', err);
+
+      let errorMsg = err.message || 'Video generation failed.';
+
+      // Friendly error messages
+      if (errorMsg.includes('auth') || errorMsg.includes('login')) {
+        errorMsg = 'The free AI model needs a quick browser confirmation. A Puter window may appear — just click "Continue" and try again. This is free and takes 5 seconds.';
+      } else if (errorMsg.includes('quota') || errorMsg.includes('limit')) {
+        errorMsg = 'The free GPU quota is temporarily busy. Please wait a few minutes and try again, or switch to a different model.';
+      }
+
+      output.innerHTML = `
+        <h3>⚠️ Generation Issue</h3>
+        <p class="logline" style="color:#f87171;">${errorMsg}</p>
+        <div class="model-info" style="margin-top:16px;">
+          💡 <strong>Tips:</strong><br>
+          • Try a different model (Wan 2.7 is fastest)<br>
+          • Wait 2–3 minutes and retry<br>
+          • Some models are busier than others at certain times<br>
+          • Refresh the page if the issue continues
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="location.reload()">
+          🔄 Try Again
+        </button>
+      `;
+
+      progressWrap.classList.add('hidden');
+      statusText.textContent = 'Generation failed. See tips above.';
+      statusText.style.color = '#f87171';
+
+    } finally {
+      isGenerating = false;
+      generateBtn.disabled = false;
+      generateBtn.textContent = '✨ Generate Free AI Video';
+    }
+  });
+</script>
+</body>
+</html>
